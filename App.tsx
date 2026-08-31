@@ -2,21 +2,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Alert, Linking, Platform, Pressable, SafeAreaView, ScrollView,
+  Alert, Image, Linking, Platform, Pressable, SafeAreaView, ScrollView,
   StatusBar, StyleSheet, Text, TextInput, View,
 } from 'react-native';
 import { formatDue, intervalPreview, isDue, scheduleReview } from './src/scheduler';
 import { CATEGORIES, TECHNIQUES } from './src/techniques';
 import { ProgressMap, Rating, Technique } from './src/types';
+import { TECHNIQUE_IMAGES } from './src/techniqueMedia';
 
 type Tab = 'learn' | 'library' | 'progress';
 const STORAGE_PROGRESS = 'jiucards.progress.v1';
 const STORAGE_FAVORITES = 'jiucards.favorites.v1';
-const RATINGS: { id: Rating; label: string; color: string }[] = [
-  { id: 'again', label: 'Nochmal', color: '#CE5647' },
-  { id: 'hard', label: 'Schwer', color: '#D88B35' },
-  { id: 'good', label: 'Gut', color: '#31806A' },
-  { id: 'easy', label: 'Leicht', color: '#2B6CB0' },
+const RATINGS: { id: Rating; label: string; color: string; icon: string }[] = [
+  { id: 'again', label: 'Nochmal', color: '#C84F43', icon: '↺' },
+  { id: 'hard', label: 'Schwer', color: '#C77A24', icon: '◆' },
+  { id: 'good', label: 'Gut', color: '#27745F', icon: '✓' },
+  { id: 'easy', label: 'Leicht', color: '#2867A4', icon: '⚡' },
 ];
 
 function sameDay(a: number, b: number) {
@@ -65,10 +66,11 @@ export default function App() {
       <View style={styles.app}>
         <Header dueCount={dueCount} />
         <View style={styles.screen}>
-          {tab === 'learn' && <LearnScreen technique={technique} progress={progress} favorite={favorites.includes(technique.id)} revealed={revealed} selectedRating={selectedRating} onFavorite={() => toggleFavorite(technique.id)} onRate={rate} onNext={next} />}
+          {tab === 'learn' && <LearnScreen technique={technique} progress={progress} favorite={favorites.includes(technique.id)} revealed={revealed} selectedRating={selectedRating} onFavorite={() => toggleFavorite(technique.id)} onRate={rate} />}
           {tab === 'library' && <LibraryScreen progress={progress} favorites={favorites} onFavorite={toggleFavorite} onLearn={learn} />}
           {tab === 'progress' && <ProgressScreen progress={progress} favorites={favorites} onReset={reset} />}
         </View>
+        {tab === 'learn' && <View style={styles.pinnedAction}><Pressable style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]} onPress={next}><Text style={styles.primaryText}>Nächste Karte  →</Text></Pressable></View>}
         <BottomNav active={tab} onChange={setTab} />
       </View>
     </SafeAreaView>
@@ -79,8 +81,8 @@ function Header({ dueCount }: { dueCount: number }) {
   return <View style={styles.header}><View><Text style={styles.brand}>JIU<Text style={styles.brandAccent}>CARDS</Text></Text><Text style={styles.tagline}>Technik im Kopf. Ruhe auf der Matte.</Text></View><View style={styles.dueBadge}><Text style={styles.dueNumber}>{dueCount}</Text><Text style={styles.dueLabel}>FÄLLIG</Text></View></View>;
 }
 
-type LearnProps = { technique: Technique; progress: ProgressMap; favorite: boolean; revealed: boolean; selectedRating: Rating | null; onFavorite: () => void; onRate: (x: Rating) => void; onNext: () => void };
-function LearnScreen({ technique, progress, favorite, revealed, selectedRating, onFavorite, onRate, onNext }: LearnProps) {
+type LearnProps = { technique: Technique; progress: ProgressMap; favorite: boolean; revealed: boolean; selectedRating: Rating | null; onFavorite: () => void; onRate: (x: Rating) => void };
+function LearnScreen({ technique, progress, favorite, revealed, selectedRating, onFavorite, onRate }: LearnProps) {
   const card = progress[technique.id];
   return <ScrollView contentContainerStyle={styles.learnContent} showsVerticalScrollIndicator={false}>
     <View style={styles.sessionRow}><Text style={styles.eyebrow}>HEUTIGE WIEDERHOLUNG</Text><Text style={styles.sessionMeta}>{card ? `${card.reviewCount}× gelernt` : 'Neue Technik'}</Text></View>
@@ -92,23 +94,25 @@ function LearnScreen({ technique, progress, favorite, revealed, selectedRating, 
       {!revealed && <Text style={styles.recallHint}>Erinnere dich an Position, Ablauf und Schlüsselpunkte.</Text>}
     </View>
     {!revealed ? <View><Text style={styles.ratingPrompt}>Wie sicher erinnerst du dich?</Text><View style={styles.ratingRow}>{RATINGS.map((option) =>
-      <Pressable key={option.id} style={({ pressed }) => [styles.ratingButton, { borderColor: option.color }, pressed && styles.pressed]} onPress={() => onRate(option.id)}>
-        <View style={[styles.ratingDot, { backgroundColor: option.color }]} /><Text style={styles.ratingLabel}>{option.label}</Text><Text style={styles.ratingInterval}>{intervalPreview(card, option.id)}</Text>
-      </Pressable>)}</View></View> : <Details technique={technique} selectedRating={selectedRating} cardProgress={card} onNext={onNext} />}
+      <Pressable key={option.id} style={({ pressed }) => [styles.ratingButton, { backgroundColor: option.color, borderColor: option.color }, pressed && styles.pressed]} onPress={() => onRate(option.id)}>
+        <View style={styles.ratingTitleRow}><Text style={styles.ratingIcon}>{option.icon}</Text><Text style={styles.ratingLabel}>{option.label}</Text></View>
+        <View style={styles.ratingIntervalPill}><Text style={styles.ratingInterval}>{intervalPreview(card, option.id)}</Text></View>
+      </Pressable>)}</View></View> : <Details technique={technique} selectedRating={selectedRating} cardProgress={card} />}
   </ScrollView>;
 }
 
-function Details({ technique, selectedRating, cardProgress, onNext }: { technique: Technique; selectedRating: Rating | null; cardProgress: ProgressMap[string] | undefined; onNext: () => void }) {
+function Details({ technique, selectedRating, cardProgress }: { technique: Technique; selectedRating: Rating | null; cardProgress: ProgressMap[string] | undefined }) {
   const rating = RATINGS.find((x) => x.id === selectedRating);
+  const techniqueImage = TECHNIQUE_IMAGES[technique.id];
   return <View style={styles.details}>
     {rating && <View style={[styles.resultBanner, { borderLeftColor: rating.color }]}><Text style={styles.resultText}>Als „{rating.label}“ bewertet · nächste Abfrage {cardProgress ? formatDue(cardProgress.dueAt) : ''}</Text></View>}
+    {techniqueImage && <View style={styles.mediaCard}><Image source={techniqueImage} style={styles.techniqueImage} resizeMode="contain" /><View style={styles.mediaCaptionRow}><Text style={styles.mediaBadge}>ANKI-DECK</Text><Text style={styles.mediaCaption}>Bild lokal auf dem Gerät gespeichert</Text></View></View>}
     <Info title="Was passiert?"><Text style={styles.bodyText}>{technique.summary}</Text></Info>
     <Info title="Ablauf">{technique.steps.map((step, index) => <View key={step} style={styles.stepRow}><View style={styles.stepNumber}><Text style={styles.stepNumberText}>{index + 1}</Text></View><Text style={styles.stepText}>{step}</Text></View>)}</Info>
     <Info title="Schlüsselpunkte"><View style={styles.chipWrap}>{technique.keyPoints.map((point) => <View key={point} style={styles.tipChip}><Text style={styles.tipText}>{point}</Text></View>)}</View></Info>
     <View style={styles.safetyBox}><Text style={styles.safetyTitle}>SICHER TRAINIEREN</Text><Text style={styles.safetyText}>{technique.safety}</Text></View>
     <Pressable style={styles.sourceButton} onPress={() => Linking.openURL(technique.sourceUrl)}><Text style={styles.sourceText}>Quelle öffnen: {technique.sourceTitle} ↗</Text></Pressable>
     <Text style={styles.license}>Zusammenfassung auf Basis der verlinkten Wikipedia-Seite. Wikipedia-Texte stehen unter CC BY-SA; Änderungen und Übersetzungen wurden vorgenommen.</Text>
-    <Pressable style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]} onPress={onNext}><Text style={styles.primaryText}>Nächste Karte  →</Text></Pressable>
   </View>;
 }
 function Info({ title, children }: { title: string; children: React.ReactNode }) { return <View style={styles.info}><Text style={styles.infoTitle}>{title}</Text>{children}</View>; }
@@ -156,9 +160,9 @@ const styles = StyleSheet.create({
   learnContent: { padding: 18, paddingBottom: 38 }, sessionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }, eyebrow: { color: C.green, fontSize: 10, letterSpacing: 1.5, fontWeight: '900' }, sessionMeta: { color: C.muted, fontSize: 11 },
   flashcard: { minHeight: 320, backgroundColor: C.white, borderRadius: 22, paddingHorizontal: 24, paddingVertical: 30, alignItems: 'center', justifyContent: 'center', shadowColor: C.ink, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.1, shadowRadius: 14, elevation: 4, borderWidth: 1, borderColor: '#ECE7DE' }, favoriteButton: { position: 'absolute', right: 17, top: 13, padding: 6 }, favoriteIcon: { fontSize: 27, color: '#A7A097' }, favoriteActive: { color: C.orange },
   categoryPill: { backgroundColor: '#E7EEE9', borderRadius: 99, paddingHorizontal: 12, paddingVertical: 6, marginBottom: 20 }, categoryText: { color: C.green, fontSize: 10, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' }, germanName: { color: C.ink, fontSize: 29, lineHeight: 34, textAlign: 'center', fontWeight: '800' }, englishName: { color: C.orange, fontSize: 18, fontWeight: '600', marginTop: 5 }, divider: { width: 34, height: 2, backgroundColor: C.line, marginVertical: 20 }, japaneseName: { color: C.ink, fontSize: 29, fontWeight: '500' }, romaji: { color: C.muted, fontSize: 14, fontStyle: 'italic', marginTop: 5 }, recallHint: { color: '#7B746C', fontSize: 11, textAlign: 'center', marginTop: 22 },
-  ratingPrompt: { color: C.muted, fontSize: 12, textAlign: 'center', marginTop: 20, marginBottom: 10 }, ratingRow: { flexDirection: 'row', gap: 7 }, ratingButton: { flex: 1, minHeight: 72, borderWidth: 1.5, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: C.white, paddingHorizontal: 2 }, ratingDot: { width: 7, height: 7, borderRadius: 4, marginBottom: 4 }, ratingLabel: { color: C.ink, fontSize: 12, fontWeight: '800' }, ratingInterval: { color: C.muted, fontSize: 9, marginTop: 2 }, pressed: { opacity: 0.67, transform: [{ scale: 0.985 }] },
-  details: { marginTop: 18 }, resultBanner: { backgroundColor: C.white, borderRadius: 10, borderLeftWidth: 4, padding: 13, marginBottom: 13 }, resultText: { color: C.ink, fontSize: 12, fontWeight: '600' }, info: { backgroundColor: C.white, borderRadius: 15, padding: 17, marginBottom: 11, borderWidth: 1, borderColor: '#E8E2D8' }, infoTitle: { color: C.green, fontSize: 12, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }, bodyText: { color: '#34404B', fontSize: 14, lineHeight: 21 }, stepRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }, stepNumber: { width: 23, height: 23, backgroundColor: C.ink, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 10 }, stepNumberText: { color: C.white, fontSize: 11, fontWeight: '800' }, stepText: { flex: 1, color: '#34404B', fontSize: 13, lineHeight: 20 }, chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 }, tipChip: { backgroundColor: '#EEF1ED', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 7 }, tipText: { color: C.green, fontSize: 11, fontWeight: '600' },
-  safetyBox: { backgroundColor: '#FFF0E6', borderRadius: 15, padding: 16, marginBottom: 11 }, safetyTitle: { color: '#AD5424', fontSize: 11, fontWeight: '900', letterSpacing: 1, marginBottom: 6 }, safetyText: { color: '#68432F', fontSize: 13, lineHeight: 19 }, sourceButton: { borderWidth: 1, borderColor: '#B8B2A8', borderRadius: 11, padding: 13, alignItems: 'center' }, sourceText: { color: C.ink, fontSize: 12, fontWeight: '700' }, license: { color: C.muted, fontSize: 9, lineHeight: 14, marginTop: 8, paddingHorizontal: 4 }, primaryButton: { backgroundColor: C.ink, borderRadius: 13, paddingVertical: 16, alignItems: 'center', marginTop: 16 }, primaryText: { color: C.white, fontSize: 14, fontWeight: '800' },
+  ratingPrompt: { color: C.muted, fontSize: 12, textAlign: 'center', marginTop: 20, marginBottom: 10 }, ratingRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 }, ratingButton: { flexBasis: '47%', flexGrow: 1, minHeight: 82, borderWidth: 1, borderRadius: 15, justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, shadowColor: C.ink, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.13, shadowRadius: 6, elevation: 3 }, ratingTitleRow: { flexDirection: 'row', alignItems: 'center' }, ratingIcon: { color: C.white, fontSize: 18, fontWeight: '900', marginRight: 8 }, ratingLabel: { color: C.white, fontSize: 14, fontWeight: '900' }, ratingIntervalPill: { alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 99, paddingHorizontal: 9, paddingVertical: 4 }, ratingInterval: { color: C.white, fontSize: 10, fontWeight: '700' }, pressed: { opacity: 0.72, transform: [{ scale: 0.985 }] },
+  details: { marginTop: 18 }, mediaCard: { backgroundColor: C.white, borderRadius: 15, marginBottom: 11, overflow: 'hidden', borderWidth: 1, borderColor: '#E8E2D8' }, techniqueImage: { width: '100%', height: 260, backgroundColor: '#F0ECE4' }, mediaCaptionRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13, paddingVertical: 10 }, mediaBadge: { color: C.white, backgroundColor: C.green, borderRadius: 99, paddingHorizontal: 8, paddingVertical: 4, fontSize: 8, fontWeight: '900', letterSpacing: 0.7, overflow: 'hidden' }, mediaCaption: { flex: 1, color: C.muted, fontSize: 10, marginLeft: 9 }, resultBanner: { backgroundColor: C.white, borderRadius: 10, borderLeftWidth: 4, padding: 13, marginBottom: 13 }, resultText: { color: C.ink, fontSize: 12, fontWeight: '600' }, info: { backgroundColor: C.white, borderRadius: 15, padding: 17, marginBottom: 11, borderWidth: 1, borderColor: '#E8E2D8' }, infoTitle: { color: C.green, fontSize: 12, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }, bodyText: { color: '#34404B', fontSize: 14, lineHeight: 21 }, stepRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }, stepNumber: { width: 23, height: 23, backgroundColor: C.ink, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 10 }, stepNumberText: { color: C.white, fontSize: 11, fontWeight: '800' }, stepText: { flex: 1, color: '#34404B', fontSize: 13, lineHeight: 20 }, chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 }, tipChip: { backgroundColor: '#EEF1ED', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 7 }, tipText: { color: C.green, fontSize: 11, fontWeight: '600' },
+  safetyBox: { backgroundColor: '#FFF0E6', borderRadius: 15, padding: 16, marginBottom: 11 }, safetyTitle: { color: '#AD5424', fontSize: 11, fontWeight: '900', letterSpacing: 1, marginBottom: 6 }, safetyText: { color: '#68432F', fontSize: 13, lineHeight: 19 }, sourceButton: { borderWidth: 1, borderColor: '#B8B2A8', borderRadius: 11, padding: 13, alignItems: 'center' }, sourceText: { color: C.ink, fontSize: 12, fontWeight: '700' }, license: { color: C.muted, fontSize: 9, lineHeight: 14, marginTop: 8, paddingHorizontal: 4 }, pinnedAction: { backgroundColor: C.paper, borderTopWidth: 1, borderTopColor: '#D9D2C6', paddingHorizontal: 18, paddingTop: 10, paddingBottom: 9, shadowColor: C.ink, shadowOffset: { width: 0, height: -3 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 6 }, primaryButton: { backgroundColor: C.ink, borderRadius: 14, paddingVertical: 15, alignItems: 'center', shadowColor: C.ink, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.18, shadowRadius: 6, elevation: 3 }, primaryText: { color: C.white, fontSize: 14, fontWeight: '800' },
   pageContent: { padding: 18, paddingBottom: 38 }, pageTitle: { color: C.ink, fontSize: 27, fontWeight: '900' }, pageSubtitle: { color: C.muted, fontSize: 13, marginTop: 4, marginBottom: 18 }, search: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 13, paddingHorizontal: 15, paddingVertical: 13, fontSize: 13, color: C.ink }, filterRow: { gap: 7, paddingVertical: 12 }, filterChip: { borderRadius: 99, borderWidth: 1, borderColor: '#CFC8BC', paddingHorizontal: 13, paddingVertical: 8, backgroundColor: C.white }, filterActive: { backgroundColor: C.green, borderColor: C.green }, filterText: { color: C.muted, fontSize: 11, fontWeight: '700' }, filterTextActive: { color: C.white }, favoriteFilter: { backgroundColor: '#FFF0E6', borderColor: C.orange }, favoriteFilterText: { color: '#AD5424' }, resultCount: { color: C.muted, fontSize: 9, fontWeight: '900', letterSpacing: 1.2, marginBottom: 7 },
   techniqueRow: { backgroundColor: C.white, borderRadius: 14, marginBottom: 9, padding: 13, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#E8E2D8' }, monogram: { width: 46, height: 46, borderRadius: 12, backgroundColor: '#E7EEE9', alignItems: 'center', justifyContent: 'center', marginRight: 12 }, monogramText: { color: C.green, fontSize: 20, fontWeight: '700' }, techniqueText: { flex: 1, paddingRight: 5 }, techniqueName: { color: C.ink, fontSize: 15, fontWeight: '800' }, translation: { color: C.muted, fontSize: 11, marginTop: 2 }, techniqueMeta: { color: '#98836D', fontSize: 9, fontWeight: '700', marginTop: 5, textTransform: 'uppercase' }, rowStar: { color: '#A7A097', fontSize: 23, padding: 4 },
   progressHero: { backgroundColor: C.green, borderRadius: 20, padding: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 12 }, progressCircle: { width: 89, height: 89, borderRadius: 45, borderWidth: 7, borderColor: C.orange, alignItems: 'center', justifyContent: 'center' }, progressPercent: { color: C.white, fontSize: 23, fontWeight: '900' }, circleLabel: { color: '#B8CBC5', fontSize: 8, fontWeight: '800', letterSpacing: 1 }, heroText: { flex: 1, marginLeft: 19 }, heroHeadline: { color: C.white, fontSize: 22, fontWeight: '900' }, heroCaption: { color: '#B8CBC5', fontSize: 11, marginTop: 2 }, progressBar: { height: 6, backgroundColor: '#416B60', borderRadius: 3, marginTop: 13, overflow: 'hidden' }, barFill: { height: 6, backgroundColor: C.orange, borderRadius: 3 },

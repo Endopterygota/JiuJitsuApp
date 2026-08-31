@@ -208,6 +208,33 @@ const compact: CompactTechnique[] = [
   ['kouchi-makikomi', 'Kleiner Innen-Wickelwurf', 'Minor inner wraparound', '小内巻込', 'Ko-uchi-makikomi', 'Takedown', 'Wickelwurf', 'Standing', 'Armzug und tiefer Eingang wickeln den Körper um ein inneres Bein.'],
   ['mat-return', 'Mat Return', 'Mat return', 'マットリターン', 'Matto ritān', 'Takedown', 'Wrestling', 'Rear Body Lock', 'Aus hinterem Body Lock wird der Partner angehoben oder über einen Trip kontrolliert zur Matte zurückgeführt.'],
   ['sacrifice-throw-butterfly', 'Butterfly-Opferwurf', 'Butterfly sacrifice throw', '引込返', 'Hikikomi-gaeshi', 'Takedown', 'Opferwurf', 'Standing', 'Ein Fall nach hinten verbindet Gürtel- oder Oberkörpergriff mit innerem Bein-Hook.'],
+
+  // Klassisches Kodokan-Gokyō – ergänzt aus dem importierten Anki-Deck
+  ['hiza-guruma', 'Knierad', 'Knee wheel', '膝車', 'Hiza-guruma', 'Takedown', 'Beinwurf', 'Standing', 'Der Fuß blockiert das Knie, während Zug und Körperdrehung den Partner wie über ein Rad führen.'],
+  ['uki-goshi', 'Schwebende Hüfte', 'Floating hip throw', '浮腰', 'Uki-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Eine kurze Hüftanlage und Oberkörperdrehung führen den Partner über die Hüftkante.'],
+  ['kosoto-gari', 'Kleine Außensichel', 'Minor outer reap', '小外刈', 'Ko-soto-gari', 'Takedown', 'Beinwurf', 'Standing', 'Die belastete Ferse wird von außen gesichelt, während der Oberkörper rückwärts geführt wird.'],
+  ['tsurikomi-goshi', 'Hebezug-Hüftwurf', 'Lifting pulling hip throw', '釣込腰', 'Tsurikomi-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Hebezug und eine tiefe Hüftposition bringen den Partner über den eigenen Schwerpunkt.'],
+  ['okuri-ashi-barai', 'Nachziehfußfeger', 'Sliding foot sweep', '送足払', 'Okuri-ashi-barai', 'Takedown', 'Beinwurf', 'Standing', 'Beim Seitwärtsschritt werden beide Füße zusammengeführt und in Bewegungsrichtung gefegt.'],
+  ['tsuri-goshi', 'Hebehüftwurf', 'Lifting hip throw', '釣腰', 'Tsuri-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Ein Griff am Gürtel hebt den Rumpf, während die Hüfte als Drehpunkt unter den Partner gelangt.'],
+  ['yoko-otoshi', 'Seitsturz', 'Side drop', '横落', 'Yoko-otoshi', 'Takedown', 'Seitenopferwurf', 'Standing', 'Der eigene Körper fällt seitlich neben den Fuß, während der Partner über die entstandene Lücke gezogen wird.'],
+  ['ashi-guruma', 'Beinrad', 'Leg wheel', '足車', 'Ashi-guruma', 'Takedown', 'Beinwurf', 'Standing', 'Das gestreckte Bein bildet die Achse, über die der gedrehte Oberkörper des Partners geführt wird.'],
+  ['hane-goshi', 'Sprunghüftwurf', 'Spring hip throw', '跳腰', 'Hane-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Hüfte und angewinkeltes Bein federn den vorwärts belasteten Partner diagonal nach oben.'],
+  ['harai-tsurikomi-ashi', 'Hebezug-Fußfeger', 'Lifting pulling foot sweep', '払釣込足', 'Harai-tsurikomi-ashi', 'Takedown', 'Beinwurf', 'Standing', 'Hebezug bringt das Gewicht nach vorn, während der Fuß den Knöchel in Wurfrichtung fegt.'],
+  ['kata-guruma', 'Schulterrad', 'Shoulder wheel', '肩車', 'Kata-guruma', 'Takedown', 'Handwurf', 'Standing', 'Der Schwerpunkt wird auf die Schultern geladen und in einer Radbewegung kontrolliert zu Boden geführt.'],
+  ['hane-makikomi', 'Sprung-Wickelwurf', 'Spring wraparound throw', '跳巻込', 'Hane-makikomi', 'Takedown', 'Wickelwurf', 'Standing', 'Der Arm wird gebunden und der Körper wickelt sich beim federnden Hüfteinsatz um den Partner.'],
+  ['sukui-nage', 'Schaufelwurf', 'Scoop throw', '掬投', 'Sukui-nage', 'Takedown', 'Handwurf', 'Standing', 'Der Partner wird an Hüfte oder Beinen aufgenommen und mit einer schaufelnden Bewegung ausgehoben.'],
+  ['utsuri-goshi', 'Hüftwechselwurf', 'Hip shift', '移腰', 'Utsuri-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Nach dem Abfangen eines Wurfes wird der Partner angehoben und auf die andere Hüftseite umgesetzt.'],
+  ['o-guruma', 'Großes Rad', 'Large wheel', '大車', 'O-guruma', 'Takedown', 'Beinwurf', 'Standing', 'Das gestreckte Bein liegt vor Hüfte oder Oberschenkeln und dient als Achse für eine große Drehbewegung.'],
+  ['soto-makikomi', 'Äußerer Wickelwurf', 'Outer wraparound throw', '外巻込', 'Soto-makikomi', 'Takedown', 'Wickelwurf', 'Standing', 'Der kontrollierte Arm wird außen gebunden und der Körper eng um den Partner eingedreht.'],
+  ['uki-otoshi', 'Schwebesturz', 'Floating drop', '浮落', 'Uki-otoshi', 'Takedown', 'Handwurf', 'Standing', 'Präziser Zug und ein abgesenkter Körper lenken den vorwärts schreitenden Partner in eine freie Falllinie.'],
+  ['ushiro-goshi', 'Rückwärtiger Hüftwurf', 'Rear hip throw', '後腰', 'Ushiro-goshi', 'Takedown', 'Hüftwurf', 'Standing', 'Ein gegnerischer Wurf wird durch Anheben abgefangen und der Partner anschließend hinter der Hüfte abgesetzt.'],
+  ['uki-waza', 'Schwebetechnik', 'Floating technique', '浮技', 'Uki-waza', 'Takedown', 'Seitenopferwurf', 'Standing', 'Seitliches Fallen und Zug führen den vorwärts belasteten Partner über das ausgestreckte Bein.'],
+  ['yoko-wakare', 'Seitentrennung', 'Side separation', '横分', 'Yoko-wakare', 'Takedown', 'Seitenopferwurf', 'Standing', 'Der Körper fällt quer unter die Bewegungsrichtung und trennt die Stützlinie des Partners.'],
+  ['ura-nage', 'Rückwurf', 'Rear throw', '裏投', 'Ura-nage', 'Takedown', 'Rückopferwurf', 'Standing', 'Der Partner wird eng am Rumpf angehoben und beim Rückwärtsfallen über die eigene Seite geführt.'],
+  ['sumi-otoshi', 'Ecksturz', 'Corner drop', '隅落', 'Sumi-otoshi', 'Takedown', 'Handwurf', 'Standing', 'Kuzushi in eine hintere Ecke lässt den Partner ohne Beinblockade über seine Stützfläche fallen.'],
+  ['yoko-gake', 'Seitlicher Haken', 'Side hook', '横掛', 'Yoko-gake', 'Takedown', 'Seitenopferwurf', 'Standing', 'Der Fuß hakt seitlich am belasteten Knöchel, während der eigene Körper kontrolliert zur Seite fällt.'],
+  ['osoto-guruma', 'Großes Außenrad', 'Large outer wheel', '大外車', 'O-soto-guruma', 'Takedown', 'Beinwurf', 'Standing', 'Das Bein blockiert beide Beine von außen und der Oberkörper dreht den Partner über diese Achse.'],
+  ['yoko-guruma', 'Seitenrad', 'Side wheel', '横車', 'Yoko-guruma', 'Takedown', 'Seitenopferwurf', 'Standing', 'Beim seitlichen Fall wird ein Bein tief durchgestellt, sodass der Partner radförmig darüber geführt wird.'],
 ];
 
 export const CATALOG_TECHNIQUES = compact.map(expand);

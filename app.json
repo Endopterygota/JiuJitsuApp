@@ -2,7 +2,7 @@
   "expo": {
     "name": "JiuCards",
     "slug": "jiucards",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,10 +18,16 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.jiucards.app"
+      "package": "com.jiucards.app",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c67645ec-bfcf-4840-996c-10559c9ad6a7"
+      }
     }
   }
 }
