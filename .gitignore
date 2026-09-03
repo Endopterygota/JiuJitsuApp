@@ -42,3 +42,8 @@ yarn-error.*
 
 # local Android packages
 *.apk
+
+# local reports and temporary import/export data
+outputs/
+.ods-import/
+.expo-release-check/
