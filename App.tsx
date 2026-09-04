@@ -17,7 +17,7 @@ import { TECHNIQUE_VIDEOS } from './src/techniqueVideos';
 type Tab = 'learn' | 'library' | 'progress' | 'settings';
 const STORAGE_PROGRESS = 'jiucards.progress.v1';
 const STORAGE_FAVORITES = 'jiucards.favorites.v1';
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 const LATEST_RELEASE_API = 'https://api.github.com/repos/Endopterygota/JiuJitsuApp/releases/latest';
 const REPOSITORY_URL = 'https://github.com/Endopterygota/JiuJitsuApp';
 const RATINGS: { id: Rating; label: string; color: string; icon: string }[] = [
@@ -112,11 +112,12 @@ function LearnScreen({ technique, progress, favorite, revealed, selectedRating, 
 function Details({ technique, selectedRating, cardProgress }: { technique: Technique; selectedRating: Rating | null; cardProgress: ProgressMap[string] | undefined }) {
   const rating = RATINGS.find((x) => x.id === selectedRating);
   const techniqueImage = TECHNIQUE_IMAGES[technique.id];
+  const techniqueImages = techniqueImage ? (Array.isArray(techniqueImage) ? techniqueImage : [techniqueImage]) : [];
   const techniqueVideo = TECHNIQUE_VIDEOS[technique.id];
   return <View style={styles.details}>
     {rating && <View style={[styles.resultBanner, { borderLeftColor: rating.color }]}><Text style={styles.resultText}>Als „{rating.label}“ bewertet · nächste Abfrage {cardProgress ? formatDue(cardProgress.dueAt) : ''}</Text></View>}
     {techniqueVideo && <TechniqueVideo source={techniqueVideo} />}
-    {techniqueImage && <View style={styles.mediaCard}><Image source={techniqueImage} style={styles.techniqueImage} resizeMode="contain" /><View style={styles.mediaCaptionRow}><Text style={styles.mediaBadge}>ANKI-DECK</Text><Text style={styles.mediaCaption}>Bild lokal auf dem Gerät gespeichert</Text></View></View>}
+    {techniqueImages.map((imageSource, index) => <View key={`${technique.id}-image-${index}`} style={styles.mediaCard}><Image source={imageSource} style={styles.techniqueImage} resizeMode="contain" /><View style={styles.mediaCaptionRow}><Text style={styles.mediaBadge}>LOKAL</Text><Text style={styles.mediaCaption}>{techniqueImages.length > 1 ? `Bild ${index + 1} von ${techniqueImages.length} · ` : ''}Im ursprünglichen Seitenverhältnis gespeichert</Text></View></View>)}
     <Info title="Was passiert?"><Text style={styles.bodyText}>{technique.summary}</Text></Info>
     <Info title="Ablauf">{technique.steps.map((step, index) => <View key={step} style={styles.stepRow}><View style={styles.stepNumber}><Text style={styles.stepNumberText}>{index + 1}</Text></View><Text style={styles.stepText}>{step}</Text></View>)}</Info>
     <Info title="Schlüsselpunkte"><View style={styles.chipWrap}>{technique.keyPoints.map((point) => <View key={point} style={styles.tipChip}><Text style={styles.tipText}>{point}</Text></View>)}</View></Info>

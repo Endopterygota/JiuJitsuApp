@@ -1,8 +1,8 @@
-import { ImageSourcePropType } from 'react-native';
-
 // Statische require-Aufrufe sorgen dafür, dass Metro die Bilder vollständig
 // in die App bündelt. Die App benötigt dafür später keine Internetverbindung.
-export const TECHNIQUE_IMAGES: Record<string, ImageSourcePropType> = {
+export type TechniqueImage = number | readonly number[];
+
+export const TECHNIQUE_IMAGES: Record<string, TechniqueImage> = {
   'de-ashi-barai': require('../assets/techniques/gokyo-no-waza2.jpg'),
   'hiza-guruma': require('../assets/techniques/gokyo-no-waza3.jpg'),
   'sasae-tsurikomi-ashi': require('../assets/techniques/gokyo-no-waza4.jpg'),
@@ -62,4 +62,35 @@ export const TECHNIQUE_IMAGES: Record<string, ImageSourcePropType> = {
   'kesa-gatame': require('../assets/techniques/kesa-gatame.png'),
   'side-control': require('../assets/techniques/side-control.png'),
   'spider-guard': require('../assets/techniques/spider-guard.png'),
+  'sit-out': require('../assets/techniques/sit-out.png'),
+  sprawl: require('../assets/techniques/sprawl.png'),
+  'technical-standup': require('../assets/techniques/technical-standup.png'),
+  'forward-roll': require('../assets/techniques/forward-roll.png'),
+  'body-triangle-escape': require('../assets/techniques/body-triangle-escape.png'),
+  'upa-escape': require('../assets/techniques/upa-escape.png'),
+  'elbow-escape': require('../assets/techniques/elbow-escape.png'),
+  'heel-drag-escape': require('../assets/techniques/heel-drag-escape.png'),
+  'front-headlock-escape': require('../assets/techniques/front-headlock-escape.png'),
+  'straight-ankle-escape': require('../assets/techniques/straight-ankle-escape.png'),
+  'ghost-escape': require('../assets/techniques/ghost-escape.png'),
+  'reguard-side-control': require('../assets/techniques/reguard-side-control.png'),
+  'turtle-guard-recovery': require('../assets/techniques/turtle-guard-recovery.png'),
+  'armbar-hitchhiker': require('../assets/techniques/armbar-hitchhiker.png'),
+  shrimp: require('../assets/techniques/shrimp.png'),
+  'kesa-escape': require('../assets/techniques/kesa-escape.png'),
+  'kipping-escape': require('../assets/techniques/kipping-escape.png'),
+  'north-south-escape': require('../assets/techniques/north-south-escape.png'),
+  americana: require('../assets/techniques/americana.png'),
+  'arm-triangle': require('../assets/techniques/arm-triangle.png'),
+  'heel-hook-outside': require('../assets/techniques/heel-hook-outside.png'),
+  darce: require('../assets/techniques/darce.png'),
+  triangle: require('../assets/techniques/triangle.png'),
+  armbar: require('../assets/techniques/armbar.png'),
+  'straight-ankle': require('../assets/techniques/straight-ankle.png'),
+  kneebar: require('../assets/techniques/kneebar.png'),
+  'heel-hook-inside': require('../assets/techniques/heel-hook-inside.png'),
+  kimura: [require('../assets/techniques/kimura-1.png'), require('../assets/techniques/kimura-2.png')],
+  omoplata: require('../assets/techniques/omoplata.png'),
+  'bow-arrow': require('../assets/techniques/bow-arrow.png'),
+  'rear-naked-choke': require('../assets/techniques/rear-naked-choke.png'),
 };
